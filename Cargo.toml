@@ -3,5 +3,12 @@ name = "rusty-typescript"
 version = "0.1.0"
 authors = ["Ya'ar Hever <yaarhever@gmail.com>"]
 edition = "2018"
+description = "A re-implementation of TypeScript in Rust"
+license = "LICENSE"
+repository = "https://github.com/yever/rusty-typescript"
 
 [dependencies]
+wasm-bindgen = "0.2"
+
+[lib]
+crate-type = ["cdylib"]
