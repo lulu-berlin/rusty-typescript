@@ -4,7 +4,9 @@
   "description": "A re-implementation of TypeScript in Rust",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "gulp --gulpfile build.ts build",
+    "clean": "gulp --gulpfile build.ts clean"
   },
   "repository": {
     "type": "git",
@@ -22,7 +24,10 @@
   "homepage": "https://github.com/yever/rusty-typescript#readme",
   "devDependencies": {
     "@types/gulp": "^4.0.6",
+    "@types/gulp-replace": "0.0.31",
+    "del": "^4.1.0",
     "gulp": "^4.0.0",
+    "gulp-replace": "^1.0.0",
     "ts-node": "^8.1.0",
     "typescript": "^3.4.3"
   }
