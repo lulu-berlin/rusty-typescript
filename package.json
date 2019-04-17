@@ -29,6 +29,7 @@
     "gulp": "^4.0.0",
     "gulp-replace": "^1.0.0",
     "ts-node": "^8.1.0",
-    "typescript": "^3.4.3"
+    "typescript": "^3.4.3",
+    "webpack": "^4.30.0"
   }
 }
