@@ -2,18 +2,27 @@ import {exec} from 'child_process';
 import del = require('del');
 import {readFileSync} from 'fs';
 import {dest, series, src} from 'gulp';
+import rename = require('gulp-rename');
 import replace = require('gulp-replace');
 import path = require('path');
 import webpack = require('webpack');
+import TerserPlugin = require('terser-webpack-plugin');
 
 const WASM_PACK_DEST = 'wasm';
 const PROJ_NAME = 'rusty-typescript';
 const TMP = 'tmp';
 const DIST = 'dist';
+
 const SNAKECASE_PROJ_NAME = PROJ_NAME.replace('-', '_');
 const JS_FILENAME =  `${SNAKECASE_PROJ_NAME}.js`;
 const BG_JS_FILENAME = `${SNAKECASE_PROJ_NAME}_bg.js`;
 const BG_WASM_FILENAME = `${SNAKECASE_PROJ_NAME}_bg.wasm`;
+
+const BUNDLE_JS = 'wasm.js';
+const BUNDLE_TS = BUNDLE_JS.replace('.js', '.ts');
+
+const TYPESCRIPT_GIT_SUBMODULE = 'TypeScript';
+const REPLACE = 'replace';
 
 function cleanWasmPackDest() {
   return del(path.resolve(__dirname, WASM_PACK_DEST));
@@ -29,9 +38,9 @@ function cleanDist() {
 
 export const clean = series(cleanWasmPackDest, cleanTmp, cleanDist);
 
-const execCommand = (command: string) => new Promise(
+const execCommand = (command: string, cwd = '') => new Promise(
   (resolve, reject) => {
-    exec(command, (error, stdout) => {
+    exec(command, {cwd}, (error, stdout) => {
       if (error) {
         reject(error);
         return;
@@ -102,12 +111,22 @@ function bundle() {
   const config: webpack.Configuration = {
     entry: `./${JS_FILENAME}`,
     output: {
-      filename: './wasm.js',
+      filename: `./${BUNDLE_JS}`,
       path: path.resolve(__dirname, DIST),
       library: 'RustyTypeScript',
       libraryTarget: 'var'
     },
-    context: path.resolve(__dirname, TMP)
+    context: path.resolve(__dirname, TMP),
+    optimization: {
+      minimizer: [
+        new TerserPlugin({
+          extractComments: {
+            condition: true,
+            banner: false
+          }
+        })
+      ]
+    }
   };
 
   return new Promise((resolve, reject) => webpack(
@@ -131,4 +150,35 @@ export const build = series(
   patchJsFile,
   copyToTmp,
   bundle
+);
+
+function makeTsBundle() {
+  return src([path.resolve(__dirname, DIST, BUNDLE_JS)])
+    // inject the @ts-ignore magic comment to disable type checking
+    .pipe(replace(/^/, '// @ts-ignore\n'))
+    .pipe(rename(BUNDLE_TS))
+    .pipe(dest(DIST));
+}
+
+export async function resetTypeScriptGitSubmodule() {
+  await execCommand('git reset --hard', TYPESCRIPT_GIT_SUBMODULE);
+  await execCommand('git clean -f -d', TYPESCRIPT_GIT_SUBMODULE);
+}
+
+function injectTsBundle() {
+  return src([path.resolve(__dirname, DIST, BUNDLE_TS)])
+    .pipe(dest(path.resolve(__dirname, TYPESCRIPT_GIT_SUBMODULE, 'src', 'compiler')));
+}
+
+function replaceTypeScriptSources() {
+  return src([path.resolve(__dirname, REPLACE, '**')])
+    .pipe(dest(path.resolve(__dirname, TYPESCRIPT_GIT_SUBMODULE)));
+}
+
+export const inject = series(
+  build,
+  makeTsBundle,
+  resetTypeScriptGitSubmodule,
+  injectTsBundle,
+  replaceTypeScriptSources
 );
