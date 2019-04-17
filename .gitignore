@@ -10,5 +10,5 @@ Cargo.lock
 **/*.rs.bk
 
 node_modules/
-
 tmp/
+dist/
