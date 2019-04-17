@@ -25,11 +25,15 @@
   "devDependencies": {
     "@types/gulp": "^4.0.6",
     "@types/gulp-replace": "0.0.31",
+    "@types/webpack": "^4.4.27",
     "del": "^4.1.0",
     "gulp": "^4.0.0",
     "gulp-replace": "^1.0.0",
     "ts-node": "^8.1.0",
     "typescript": "^3.4.3",
     "webpack": "^4.30.0"
+  },
+  "dependencies": {
+    "fast-text-encoding": "^1.0.0"
   }
 }
