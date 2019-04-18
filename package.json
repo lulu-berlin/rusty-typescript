@@ -4,9 +4,11 @@
   "description": "A re-implementation of TypeScript in Rust",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "gulp --gulpfile build.ts build",
-    "clean": "gulp --gulpfile build.ts clean"
+    "gulp": "gulp --gulpfile build.ts",
+    "build": "npm run gulp build",
+    "clean": "npm run gulp clean",
+    "inject": "npm run gulp inject",
+    "test": "npm run inject && cd TypeScript && npm install && npm test"
   },
   "repository": {
     "type": "git",

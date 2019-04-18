@@ -22,7 +22,7 @@ const BUNDLE_JS = 'wasm.js';
 const BUNDLE_TS = BUNDLE_JS.replace('.js', '.ts');
 
 const TYPESCRIPT_GIT_SUBMODULE = 'TypeScript';
-const REPLACE = 'replace';
+const REPLACE = 'TypeScript-replace';
 
 function cleanWasmPackDest() {
   return del(path.resolve(__dirname, WASM_PACK_DEST));
@@ -36,7 +36,12 @@ function cleanDist() {
   return del(path.resolve(__dirname, DIST));
 }
 
-export const clean = series(cleanWasmPackDest, cleanTmp, cleanDist);
+export const clean = series(
+  cleanWasmPackDest,
+  cleanTmp,
+  cleanDist,
+  resetTypeScriptGitSubmodule,
+);
 
 const execCommand = (command: string, cwd = '') => new Promise(
   (resolve, reject) => {
@@ -156,11 +161,13 @@ function makeTsBundle() {
   return src([path.resolve(__dirname, DIST, BUNDLE_JS)])
     // inject the @ts-ignore magic comment to disable type checking
     .pipe(replace(/^/, '// @ts-ignore\n'))
+    // inject the tslint:disable magic comment to disable tslint for this file
+    .pipe(replace(/^/, '// tslint:disable\n'))
     .pipe(rename(BUNDLE_TS))
     .pipe(dest(DIST));
 }
 
-export async function resetTypeScriptGitSubmodule() {
+async function resetTypeScriptGitSubmodule() {
   await execCommand('git reset --hard', TYPESCRIPT_GIT_SUBMODULE);
   await execCommand('git clean -f -d', TYPESCRIPT_GIT_SUBMODULE);
 }
@@ -178,7 +185,6 @@ function replaceTypeScriptSources() {
 export const inject = series(
   build,
   makeTsBundle,
-  resetTypeScriptGitSubmodule,
   injectTsBundle,
   replaceTypeScriptSources
 );
