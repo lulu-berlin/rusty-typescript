@@ -4,9 +4,11 @@
   "description": "A re-implementation of TypeScript in Rust",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "gulp --gulpfile build.ts build",
-    "clean": "gulp --gulpfile build.ts clean"
+    "gulp": "gulp --gulpfile build.ts",
+    "build": "npm run gulp build",
+    "clean": "npm run gulp clean",
+    "inject": "npm run gulp inject",
+    "test": "npm run inject && cd TypeScript && npm install && npm test"
   },
   "repository": {
     "type": "git",
@@ -24,11 +26,15 @@
   "homepage": "https://github.com/yever/rusty-typescript#readme",
   "devDependencies": {
     "@types/gulp": "^4.0.6",
+    "@types/gulp-rename": "0.0.33",
     "@types/gulp-replace": "0.0.31",
+    "@types/terser-webpack-plugin": "^1.2.1",
     "@types/webpack": "^4.4.27",
     "del": "^4.1.0",
     "gulp": "^4.0.0",
+    "gulp-rename": "^1.4.0",
     "gulp-replace": "^1.0.0",
+    "terser-webpack-plugin": "^1.2.3",
     "ts-node": "^8.1.0",
     "typescript": "^3.4.3",
     "webpack": "^4.30.0"
