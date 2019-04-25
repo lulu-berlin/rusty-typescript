@@ -8,13 +8,13 @@ git:
 
 before_install:
   - git submodule update --init --recursive
-  - mkdir -p $HOME/typescript_node_modules
+  - mkdir -p $HOME/typescript_node_modules/node_modules
   - mv $HOME/typescript_node_modules/* $TRAVIS_BUILD_DIR/TypeScript/
   - export PATH="$HOME/.cargo/bin:$PATH"
   - curl https://sh.rustup.rs -sSf | sh -s -- -y
 
 script:
-  - echo "done"
+  - cd TypeScript && npm install
 
 before_cache:
   - npm run clean
