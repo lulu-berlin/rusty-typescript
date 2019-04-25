@@ -134,152 +134,147 @@ const AT_TOKEN: &'static str = "@";
 
 #[wasm_bindgen]
 pub fn token_to_string(t: u32) -> Option<String> {
-    match FromPrimitive::from_u32(t) {
-        Some(SyntaxKind::AbstractKeyword) => Some(ABSTRACT.into()),
-        Some(SyntaxKind::AnyKeyword) => Some(ANY.into()),
-        Some(SyntaxKind::AsKeyword) => Some(AS.into()),
-        Some(SyntaxKind::BigIntKeyword) => Some(BIGINT.into()),
-        Some(SyntaxKind::BooleanKeyword) => Some(BOOLEAN.into()),
-        Some(SyntaxKind::BreakKeyword) => Some(BREAK.into()),
-        Some(SyntaxKind::CaseKeyword) => Some(CASE.into()),
-        Some(SyntaxKind::CatchKeyword) => Some(CATCH.into()),
-        Some(SyntaxKind::ClassKeyword) => Some(CLASS.into()),
-        Some(SyntaxKind::ContinueKeyword) => Some(CONTINUE.into()),
-        Some(SyntaxKind::ConstKeyword) => Some(CONST.into()),
-        Some(SyntaxKind::ConstructorKeyword) => Some(CONSTRUCTOR.into()),
-        Some(SyntaxKind::DebuggerKeyword) => Some(DEBUGGER.into()),
-        Some(SyntaxKind::DeclareKeyword) => Some(DECLARE.into()),
-        Some(SyntaxKind::DefaultKeyword) => Some(DEFAULT.into()),
-        Some(SyntaxKind::DeleteKeyword) => Some(DELETE.into()),
-        Some(SyntaxKind::DoKeyword) => Some(DO.into()),
-        Some(SyntaxKind::ElseKeyword) => Some(ELSE.into()),
-        Some(SyntaxKind::EnumKeyword) => Some(ENUM.into()),
-        Some(SyntaxKind::ExportKeyword) => Some(EXPORT.into()),
-        Some(SyntaxKind::ExtendsKeyword) => Some(EXTENDS.into()),
-        Some(SyntaxKind::FalseKeyword) => Some(FALSE.into()),
-        Some(SyntaxKind::FinallyKeyword) => Some(FINALLY.into()),
-        Some(SyntaxKind::ForKeyword) => Some(FOR.into()),
-        Some(SyntaxKind::FromKeyword) => Some(FROM.into()),
-        Some(SyntaxKind::FunctionKeyword) => Some(FUNCTION.into()),
-        Some(SyntaxKind::GetKeyword) => Some(GET.into()),
-        Some(SyntaxKind::IfKeyword) => Some(IF.into()),
-        Some(SyntaxKind::ImplementsKeyword) => Some(IMPLEMENTS.into()),
-        Some(SyntaxKind::ImportKeyword) => Some(IMPORT.into()),
-        Some(SyntaxKind::InKeyword) => Some(IN.into()),
-        Some(SyntaxKind::InferKeyword) => Some(INFER.into()),
-        Some(SyntaxKind::InstanceOfKeyword) => Some(INSTANCEOF.into()),
-        Some(SyntaxKind::InterfaceKeyword) => Some(INTERFACE.into()),
-        Some(SyntaxKind::IsKeyword) => Some(IS.into()),
-        Some(SyntaxKind::KeyOfKeyword) => Some(KEYOF.into()),
-        Some(SyntaxKind::LetKeyword) => Some(LET.into()),
-        Some(SyntaxKind::ModuleKeyword) => Some(MODULE.into()),
-        Some(SyntaxKind::NamespaceKeyword) => Some(NAMESPACE.into()),
-        Some(SyntaxKind::NeverKeyword) => Some(NEVER.into()),
-        Some(SyntaxKind::NewKeyword) => Some(NEW.into()),
-        Some(SyntaxKind::NullKeyword) => Some(NULL.into()),
-        Some(SyntaxKind::NumberKeyword) => Some(NUMBER.into()),
-        Some(SyntaxKind::ObjectKeyword) => Some(OBJECT.into()),
-        Some(SyntaxKind::PackageKeyword) => Some(PACKAGE.into()),
-        Some(SyntaxKind::PrivateKeyword) => Some(PRIVATE.into()),
-        Some(SyntaxKind::ProtectedKeyword) => Some(PROTECTED.into()),
-        Some(SyntaxKind::PublicKeyword) => Some(PUBLIC.into()),
-        Some(SyntaxKind::ReadonlyKeyword) => Some(READONLY.into()),
-        Some(SyntaxKind::RequireKeyword) => Some(REQUIRE.into()),
-        Some(SyntaxKind::GlobalKeyword) => Some(GLOBAL.into()),
-        Some(SyntaxKind::ReturnKeyword) => Some(RETURN.into()),
-        Some(SyntaxKind::SetKeyword) => Some(SET.into()),
-        Some(SyntaxKind::StaticKeyword) => Some(STATIC.into()),
-        Some(SyntaxKind::StringKeyword) => Some(STRING.into()),
-        Some(SyntaxKind::SuperKeyword) => Some(SUPER.into()),
-        Some(SyntaxKind::SwitchKeyword) => Some(SWITCH.into()),
-        Some(SyntaxKind::SymbolKeyword) => Some(SYMBOL.into()),
-        Some(SyntaxKind::ThisKeyword) => Some(THIS.into()),
-        Some(SyntaxKind::ThrowKeyword) => Some(THROW.into()),
-        Some(SyntaxKind::TrueKeyword) => Some(TRUE.into()),
-        Some(SyntaxKind::TryKeyword) => Some(TRY.into()),
-        Some(SyntaxKind::TypeKeyword) => Some(TYPE.into()),
-        Some(SyntaxKind::TypeOfKeyword) => Some(TYPEOF.into()),
-        Some(SyntaxKind::UndefinedKeyword) => Some(UNDEFINED.into()),
-        Some(SyntaxKind::UniqueKeyword) => Some(UNIQUE.into()),
-        Some(SyntaxKind::UnknownKeyword) => Some(UNKNOWN.into()),
-        Some(SyntaxKind::VarKeyword) => Some(VAR.into()),
-        Some(SyntaxKind::VoidKeyword) => Some(VOID.into()),
-        Some(SyntaxKind::WhileKeyword) => Some(WHILE.into()),
-        Some(SyntaxKind::WithKeyword) => Some(WITH.into()),
-        Some(SyntaxKind::YieldKeyword) => Some(YIELD.into()),
-        Some(SyntaxKind::AsyncKeyword) => Some(ASYNC.into()),
-        Some(SyntaxKind::AwaitKeyword) => Some(AWAIT.into()),
-        Some(SyntaxKind::OfKeyword) => Some(OF.into()),
-        Some(SyntaxKind::OpenBraceToken) => Some(OPEN_BRACE_TOKEN.into()),
-        Some(SyntaxKind::CloseBraceToken) => Some(CLOSE_BRACE_TOKEN.into()),
-        Some(SyntaxKind::OpenParenToken) => Some(OPEN_PAREN_TOKEN.into()),
-        Some(SyntaxKind::CloseParenToken) => Some(CLOSE_PAREN_TOKEN.into()),
-        Some(SyntaxKind::OpenBracketToken) => Some(OPEN_BRACKET_TOKEN.into()),
-        Some(SyntaxKind::CloseBracketToken) => Some(CLOSE_BRACKET_TOKEN.into()),
-        Some(SyntaxKind::DotToken) => Some(DOT_TOKEN.into()),
-        Some(SyntaxKind::DotDotDotToken) => Some(DOT_DOT_DOT_TOKEN.into()),
-        Some(SyntaxKind::SemicolonToken) => Some(SEMICOLON_TOKEN.into()),
-        Some(SyntaxKind::CommaToken) => Some(COMMA_TOKEN.into()),
-        Some(SyntaxKind::LessThanToken) => Some(LESS_THAN_TOKEN.into()),
-        Some(SyntaxKind::GreaterThanToken) => Some(GREATER_THAN_TOKEN.into()),
-        Some(SyntaxKind::LessThanEqualsToken) => Some(LESS_THAN_EQUALS_TOKEN.into()),
-        Some(SyntaxKind::GreaterThanEqualsToken) => Some(GREATER_THAN_EQUALS_TOKEN.into()),
-        Some(SyntaxKind::EqualsEqualsToken) => Some(EQUALS_EQUALS_TOKEN.into()),
-        Some(SyntaxKind::ExclamationEqualsToken) => Some(EXCLAMATION_EQUALS_TOKEN.into()),
-        Some(SyntaxKind::EqualsEqualsEqualsToken) => Some(EQUALS_EQUALS_EQUALS_TOKEN.into()),
-        Some(SyntaxKind::ExclamationEqualsEqualsToken) => {
-            Some(EXCLAMATION_EQUALS_EQUALS_TOKEN.into())
-        }
-        Some(SyntaxKind::EqualsGreaterThanToken) => Some(EQUALS_GREATER_THAN_TOKEN.into()),
-        Some(SyntaxKind::PlusToken) => Some(PLUS_TOKEN.into()),
-        Some(SyntaxKind::MinusToken) => Some(MINUS_TOKEN.into()),
-        Some(SyntaxKind::AsteriskAsteriskToken) => Some(ASTERISK_ASTERISK_TOKEN.into()),
-        Some(SyntaxKind::AsteriskToken) => Some(ASTERISK_TOKEN.into()),
-        Some(SyntaxKind::SlashToken) => Some(SLASH_TOKEN.into()),
-        Some(SyntaxKind::PercentToken) => Some(PERCENT_TOKEN.into()),
-        Some(SyntaxKind::PlusPlusToken) => Some(PLUS_PLUS_TOKEN.into()),
-        Some(SyntaxKind::MinusMinusToken) => Some(MINUS_MINUS_TOKEN.into()),
-        Some(SyntaxKind::LessThanLessThanToken) => Some(LESS_THAN_LESS_THAN_TOKEN.into()),
-        Some(SyntaxKind::LessThanSlashToken) => Some(LESS_THAN_SLASH_TOKEN.into()),
-        Some(SyntaxKind::GreaterThanGreaterThanToken) => {
-            Some(GREATER_THAN_GREATER_THAN_TOKEN.into())
-        }
-        Some(SyntaxKind::GreaterThanGreaterThanGreaterThanToken) => {
-            Some(GREATER_THAN_GREATER_THAN_GREATER_THAN_TOKEN.into())
-        }
-        Some(SyntaxKind::AmpersandToken) => Some(AMPERSAND_TOKEN.into()),
-        Some(SyntaxKind::BarToken) => Some(BAR_TOKEN.into()),
-        Some(SyntaxKind::CaretToken) => Some(CARET_TOKEN.into()),
-        Some(SyntaxKind::ExclamationToken) => Some(EXCLAMATION_TOKEN.into()),
-        Some(SyntaxKind::TildeToken) => Some(TILDE_TOKEN.into()),
-        Some(SyntaxKind::AmpersandAmpersandToken) => Some(AMPERSAND_AMPERSAND_TOKEN.into()),
-        Some(SyntaxKind::BarBarToken) => Some(BAR_BAR_TOKEN.into()),
-        Some(SyntaxKind::QuestionToken) => Some(QUESTION_TOKEN.into()),
-        Some(SyntaxKind::ColonToken) => Some(COLON_TOKEN.into()),
-        Some(SyntaxKind::EqualsToken) => Some(EQUALS_TOKEN.into()),
-        Some(SyntaxKind::PlusEqualsToken) => Some(PLUS_EQUALS_TOKEN.into()),
-        Some(SyntaxKind::MinusEqualsToken) => Some(MINUS_EQUALS_TOKEN.into()),
-        Some(SyntaxKind::AsteriskEqualsToken) => Some(ASTERISK_EQUALS_TOKEN.into()),
-        Some(SyntaxKind::AsteriskAsteriskEqualsToken) => {
-            Some(ASTERISK_ASTERISK_EQUALS_TOKEN.into())
-        }
-        Some(SyntaxKind::SlashEqualsToken) => Some(SLASH_EQUALS_TOKEN.into()),
-        Some(SyntaxKind::PercentEqualsToken) => Some(PERCENT_EQUALS_TOKEN.into()),
-        Some(SyntaxKind::LessThanLessThanEqualsToken) => {
-            Some(LESS_THAN_LESS_THAN_EQUALS_TOKEN.into())
-        }
-        Some(SyntaxKind::GreaterThanGreaterThanEqualsToken) => {
-            Some(GREATER_THAN_GREATER_THAN_EQUALS_TOKEN.into())
-        }
-        Some(SyntaxKind::GreaterThanGreaterThanGreaterThanEqualsToken) => {
-            Some(GREATER_THAN_GREATER_THAN_GREATER_THAN_EQUALS_TOKEN.into())
-        }
-        Some(SyntaxKind::AmpersandEqualsToken) => Some(AMPERSAND_EQUALS_TOKEN.into()),
-        Some(SyntaxKind::BarEqualsToken) => Some(BAR_EQUALS_TOKEN.into()),
-        Some(SyntaxKind::CaretEqualsToken) => Some(CARET_EQUALS_TOKEN.into()),
-        Some(SyntaxKind::AtToken) => Some(AT_TOKEN.into()),
-        _ => None,
-    }
+    FromPrimitive::from_u32(t)
+        .map(|t: SyntaxKind| match t {
+            SyntaxKind::AbstractKeyword => Some(ABSTRACT),
+            SyntaxKind::AnyKeyword => Some(ANY),
+            SyntaxKind::AsKeyword => Some(AS),
+            SyntaxKind::BigIntKeyword => Some(BIGINT),
+            SyntaxKind::BooleanKeyword => Some(BOOLEAN),
+            SyntaxKind::BreakKeyword => Some(BREAK),
+            SyntaxKind::CaseKeyword => Some(CASE),
+            SyntaxKind::CatchKeyword => Some(CATCH),
+            SyntaxKind::ClassKeyword => Some(CLASS),
+            SyntaxKind::ContinueKeyword => Some(CONTINUE),
+            SyntaxKind::ConstKeyword => Some(CONST),
+            SyntaxKind::ConstructorKeyword => Some(CONSTRUCTOR),
+            SyntaxKind::DebuggerKeyword => Some(DEBUGGER),
+            SyntaxKind::DeclareKeyword => Some(DECLARE),
+            SyntaxKind::DefaultKeyword => Some(DEFAULT),
+            SyntaxKind::DeleteKeyword => Some(DELETE),
+            SyntaxKind::DoKeyword => Some(DO),
+            SyntaxKind::ElseKeyword => Some(ELSE),
+            SyntaxKind::EnumKeyword => Some(ENUM),
+            SyntaxKind::ExportKeyword => Some(EXPORT),
+            SyntaxKind::ExtendsKeyword => Some(EXTENDS),
+            SyntaxKind::FalseKeyword => Some(FALSE),
+            SyntaxKind::FinallyKeyword => Some(FINALLY),
+            SyntaxKind::ForKeyword => Some(FOR),
+            SyntaxKind::FromKeyword => Some(FROM),
+            SyntaxKind::FunctionKeyword => Some(FUNCTION),
+            SyntaxKind::GetKeyword => Some(GET),
+            SyntaxKind::IfKeyword => Some(IF),
+            SyntaxKind::ImplementsKeyword => Some(IMPLEMENTS),
+            SyntaxKind::ImportKeyword => Some(IMPORT),
+            SyntaxKind::InKeyword => Some(IN),
+            SyntaxKind::InferKeyword => Some(INFER),
+            SyntaxKind::InstanceOfKeyword => Some(INSTANCEOF),
+            SyntaxKind::InterfaceKeyword => Some(INTERFACE),
+            SyntaxKind::IsKeyword => Some(IS),
+            SyntaxKind::KeyOfKeyword => Some(KEYOF),
+            SyntaxKind::LetKeyword => Some(LET),
+            SyntaxKind::ModuleKeyword => Some(MODULE),
+            SyntaxKind::NamespaceKeyword => Some(NAMESPACE),
+            SyntaxKind::NeverKeyword => Some(NEVER),
+            SyntaxKind::NewKeyword => Some(NEW),
+            SyntaxKind::NullKeyword => Some(NULL),
+            SyntaxKind::NumberKeyword => Some(NUMBER),
+            SyntaxKind::ObjectKeyword => Some(OBJECT),
+            SyntaxKind::PackageKeyword => Some(PACKAGE),
+            SyntaxKind::PrivateKeyword => Some(PRIVATE),
+            SyntaxKind::ProtectedKeyword => Some(PROTECTED),
+            SyntaxKind::PublicKeyword => Some(PUBLIC),
+            SyntaxKind::ReadonlyKeyword => Some(READONLY),
+            SyntaxKind::RequireKeyword => Some(REQUIRE),
+            SyntaxKind::GlobalKeyword => Some(GLOBAL),
+            SyntaxKind::ReturnKeyword => Some(RETURN),
+            SyntaxKind::SetKeyword => Some(SET),
+            SyntaxKind::StaticKeyword => Some(STATIC),
+            SyntaxKind::StringKeyword => Some(STRING),
+            SyntaxKind::SuperKeyword => Some(SUPER),
+            SyntaxKind::SwitchKeyword => Some(SWITCH),
+            SyntaxKind::SymbolKeyword => Some(SYMBOL),
+            SyntaxKind::ThisKeyword => Some(THIS),
+            SyntaxKind::ThrowKeyword => Some(THROW),
+            SyntaxKind::TrueKeyword => Some(TRUE),
+            SyntaxKind::TryKeyword => Some(TRY),
+            SyntaxKind::TypeKeyword => Some(TYPE),
+            SyntaxKind::TypeOfKeyword => Some(TYPEOF),
+            SyntaxKind::UndefinedKeyword => Some(UNDEFINED),
+            SyntaxKind::UniqueKeyword => Some(UNIQUE),
+            SyntaxKind::UnknownKeyword => Some(UNKNOWN),
+            SyntaxKind::VarKeyword => Some(VAR),
+            SyntaxKind::VoidKeyword => Some(VOID),
+            SyntaxKind::WhileKeyword => Some(WHILE),
+            SyntaxKind::WithKeyword => Some(WITH),
+            SyntaxKind::YieldKeyword => Some(YIELD),
+            SyntaxKind::AsyncKeyword => Some(ASYNC),
+            SyntaxKind::AwaitKeyword => Some(AWAIT),
+            SyntaxKind::OfKeyword => Some(OF),
+            SyntaxKind::OpenBraceToken => Some(OPEN_BRACE_TOKEN),
+            SyntaxKind::CloseBraceToken => Some(CLOSE_BRACE_TOKEN),
+            SyntaxKind::OpenParenToken => Some(OPEN_PAREN_TOKEN),
+            SyntaxKind::CloseParenToken => Some(CLOSE_PAREN_TOKEN),
+            SyntaxKind::OpenBracketToken => Some(OPEN_BRACKET_TOKEN),
+            SyntaxKind::CloseBracketToken => Some(CLOSE_BRACKET_TOKEN),
+            SyntaxKind::DotToken => Some(DOT_TOKEN),
+            SyntaxKind::DotDotDotToken => Some(DOT_DOT_DOT_TOKEN),
+            SyntaxKind::SemicolonToken => Some(SEMICOLON_TOKEN),
+            SyntaxKind::CommaToken => Some(COMMA_TOKEN),
+            SyntaxKind::LessThanToken => Some(LESS_THAN_TOKEN),
+            SyntaxKind::GreaterThanToken => Some(GREATER_THAN_TOKEN),
+            SyntaxKind::LessThanEqualsToken => Some(LESS_THAN_EQUALS_TOKEN),
+            SyntaxKind::GreaterThanEqualsToken => Some(GREATER_THAN_EQUALS_TOKEN),
+            SyntaxKind::EqualsEqualsToken => Some(EQUALS_EQUALS_TOKEN),
+            SyntaxKind::ExclamationEqualsToken => Some(EXCLAMATION_EQUALS_TOKEN),
+            SyntaxKind::EqualsEqualsEqualsToken => Some(EQUALS_EQUALS_EQUALS_TOKEN),
+            SyntaxKind::ExclamationEqualsEqualsToken => Some(EXCLAMATION_EQUALS_EQUALS_TOKEN),
+            SyntaxKind::EqualsGreaterThanToken => Some(EQUALS_GREATER_THAN_TOKEN),
+            SyntaxKind::PlusToken => Some(PLUS_TOKEN),
+            SyntaxKind::MinusToken => Some(MINUS_TOKEN),
+            SyntaxKind::AsteriskAsteriskToken => Some(ASTERISK_ASTERISK_TOKEN),
+            SyntaxKind::AsteriskToken => Some(ASTERISK_TOKEN),
+            SyntaxKind::SlashToken => Some(SLASH_TOKEN),
+            SyntaxKind::PercentToken => Some(PERCENT_TOKEN),
+            SyntaxKind::PlusPlusToken => Some(PLUS_PLUS_TOKEN),
+            SyntaxKind::MinusMinusToken => Some(MINUS_MINUS_TOKEN),
+            SyntaxKind::LessThanLessThanToken => Some(LESS_THAN_LESS_THAN_TOKEN),
+            SyntaxKind::LessThanSlashToken => Some(LESS_THAN_SLASH_TOKEN),
+            SyntaxKind::GreaterThanGreaterThanToken => Some(GREATER_THAN_GREATER_THAN_TOKEN),
+            SyntaxKind::GreaterThanGreaterThanGreaterThanToken => {
+                Some(GREATER_THAN_GREATER_THAN_GREATER_THAN_TOKEN)
+            }
+            SyntaxKind::AmpersandToken => Some(AMPERSAND_TOKEN),
+            SyntaxKind::BarToken => Some(BAR_TOKEN),
+            SyntaxKind::CaretToken => Some(CARET_TOKEN),
+            SyntaxKind::ExclamationToken => Some(EXCLAMATION_TOKEN),
+            SyntaxKind::TildeToken => Some(TILDE_TOKEN),
+            SyntaxKind::AmpersandAmpersandToken => Some(AMPERSAND_AMPERSAND_TOKEN),
+            SyntaxKind::BarBarToken => Some(BAR_BAR_TOKEN),
+            SyntaxKind::QuestionToken => Some(QUESTION_TOKEN),
+            SyntaxKind::ColonToken => Some(COLON_TOKEN),
+            SyntaxKind::EqualsToken => Some(EQUALS_TOKEN),
+            SyntaxKind::PlusEqualsToken => Some(PLUS_EQUALS_TOKEN),
+            SyntaxKind::MinusEqualsToken => Some(MINUS_EQUALS_TOKEN),
+            SyntaxKind::AsteriskEqualsToken => Some(ASTERISK_EQUALS_TOKEN),
+            SyntaxKind::AsteriskAsteriskEqualsToken => Some(ASTERISK_ASTERISK_EQUALS_TOKEN),
+            SyntaxKind::SlashEqualsToken => Some(SLASH_EQUALS_TOKEN),
+            SyntaxKind::PercentEqualsToken => Some(PERCENT_EQUALS_TOKEN),
+            SyntaxKind::LessThanLessThanEqualsToken => Some(LESS_THAN_LESS_THAN_EQUALS_TOKEN),
+            SyntaxKind::GreaterThanGreaterThanEqualsToken => {
+                Some(GREATER_THAN_GREATER_THAN_EQUALS_TOKEN)
+            }
+            SyntaxKind::GreaterThanGreaterThanGreaterThanEqualsToken => {
+                Some(GREATER_THAN_GREATER_THAN_GREATER_THAN_EQUALS_TOKEN)
+            }
+            SyntaxKind::AmpersandEqualsToken => Some(AMPERSAND_EQUALS_TOKEN),
+            SyntaxKind::BarEqualsToken => Some(BAR_EQUALS_TOKEN),
+            SyntaxKind::CaretEqualsToken => Some(CARET_EQUALS_TOKEN),
+            SyntaxKind::AtToken => Some(AT_TOKEN),
+            _ => None,
+        })
+        .unwrap_or_default()
+        .map(String::from)
 }
 
 #[wasm_bindgen]
@@ -304,7 +299,7 @@ pub fn is_white_space_single_line(ch: u32) -> bool {
                 || charcode == CharacterCodes::IdeographicSpace
                 || charcode == CharacterCodes::ByteOrderMark
         })
-        .unwrap_or(false)
+        .unwrap_or_default() // the default of bool is false
 }
 
 #[wasm_bindgen]
@@ -327,7 +322,7 @@ pub fn is_line_break(ch: u32) -> bool {
                 || charcode == CharacterCodes::LineSeparator
                 || charcode == CharacterCodes::ParagraphSeparator
         })
-        .unwrap_or(false)
+        .unwrap_or_default() // the default of bool is false
 }
 
 #[wasm_bindgen]
