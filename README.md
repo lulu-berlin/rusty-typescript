@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.com/yever/rusty-typescript.svg?branch=master)](https://travis-ci.com/yever/rusty-typescript)
+
 # rusty-typescript
 A re-implementation of TypeScript in Rust.
 
