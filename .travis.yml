@@ -13,9 +13,6 @@ before_install:
   - export PATH="$HOME/.cargo/bin:$PATH"
   - curl https://sh.rustup.rs -sSf | sh -s -- -y
 
-script:
-  - cd TypeScript && npm install
-
 before_cache:
   - npm run clean
   - mv $TRAVIS_BUILD_DIR/TypeScript/node_modules $HOME/typescript_node_modules/
