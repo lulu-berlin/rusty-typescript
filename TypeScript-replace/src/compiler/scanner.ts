@@ -421,29 +421,7 @@ namespace ts {
       }
 
       export function couldStartTrivia(text: string, pos: number): boolean {
-          // Keep in sync with skipTrivia
-          const ch = text.charCodeAt(pos);
-          switch (ch) {
-              case CharacterCodes.carriageReturn:
-              case CharacterCodes.lineFeed:
-              case CharacterCodes.tab:
-              case CharacterCodes.verticalTab:
-              case CharacterCodes.formFeed:
-              case CharacterCodes.space:
-              case CharacterCodes.slash:
-                  // starts of normal trivia
-              case CharacterCodes.lessThan:
-              case CharacterCodes.bar:
-              case CharacterCodes.equals:
-              case CharacterCodes.greaterThan:
-                  // Starts of conflict marker trivia
-                  return true;
-              case CharacterCodes.hash:
-                  // Only if its the beginning can we have #! trivia
-                  return pos === 0;
-              default:
-                  return ch > CharacterCodes.maxAsciiCharacter;
-          }
+        return RustyTypeScript.couldStartTrivia(text, pos);
       }
 
       /* @internal */

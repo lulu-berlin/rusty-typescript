@@ -329,3 +329,34 @@ pub fn is_line_break(ch: u32) -> bool {
 pub fn is_white_space_like(ch: u32) -> bool {
     is_white_space_single_line(ch) || is_line_break(ch)
 }
+
+#[wasm_bindgen(js_name = "couldStartTrivia")]
+pub fn could_start_trivia(text: &str, pos: usize) -> bool {
+    text.chars()
+        .nth(pos)
+        .map(|ch| {
+            FromPrimitive::from_u32(ch as u32)
+                .map(|charcode: CharacterCodes| match charcode {
+                    CharacterCodes::CarriageReturn |
+                    CharacterCodes::LineFeed |
+                    CharacterCodes::Tab |
+                    CharacterCodes::VerticalTab |
+                    CharacterCodes::FormFeed |
+                    CharacterCodes::Space |
+                    CharacterCodes::Slash |
+                        // starts of normal trivia
+                    CharacterCodes::LessThan |
+                    CharacterCodes::Bar |
+                    CharacterCodes::Equals |
+                    CharacterCodes::GreaterThan =>
+                        // Starts of conflict marker trivia
+                        true,
+                    CharacterCodes::Hash =>
+                        // Only if its the beginning can we have #! trivia
+                        pos == 0,
+                    _ => ch as u32 > CharacterCodes::MaxAsciiCharacter as u32,
+                })
+                .unwrap_or_default()
+        })
+        .unwrap_or_default()
+}
