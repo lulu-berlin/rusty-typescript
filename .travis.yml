@@ -4,12 +4,9 @@ node_js:
   - "10"
 
 before_install:
-  - mkdir -p $HOME/cache/node_modules
+  - export PATH="$HOME/.cargo/bin:$PATH"
   - command -v rustup || curl https://sh.rustup.rs -sSf | sh -s -- -y
   - rustup default stable
-
-before_cache:
-  - mv $TRAVIS_BUILD_DIR/TypeScript/node_modules $HOME/cache/
 
 cache:
   directories:
@@ -17,5 +14,4 @@ cache:
     - $TRAVIS_BUILD_DIR/node_modules
     - $HOME/.cargo
     - $HOME/.npm
-
 
