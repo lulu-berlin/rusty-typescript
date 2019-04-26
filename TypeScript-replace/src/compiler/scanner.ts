@@ -290,7 +290,7 @@ namespace ts {
     }
 
     export function tokenToString(t: SyntaxKind): string | undefined {
-        return RustyTypeScript.token_to_string(t);
+        return RustyTypeScript.tokenToString(t);
     }
 
     /* @internal */
@@ -399,16 +399,16 @@ namespace ts {
     }
 
     export function isWhiteSpaceLike(ch: number): boolean {
-        return RustyTypeScript.is_white_space_like(ch);
+        return RustyTypeScript.isWhiteSpaceLike(ch);
     }
 
     /** Does not include line breaks. For that, see isWhiteSpaceLike. */
     export function isWhiteSpaceSingleLine(ch: number): boolean {
-        return RustyTypeScript.is_white_space_single_line(ch);
+        return RustyTypeScript.isWhiteSpaceSingleLine(ch);
     }
 
     export function isLineBreak(ch: number): boolean {
-        return RustyTypeScript.is_line_break(ch);
+        return RustyTypeScript.isLineBreak(ch);
     }
 
       function isDigit(ch: number): boolean {

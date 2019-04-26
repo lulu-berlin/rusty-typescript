@@ -132,7 +132,7 @@ const BAR_EQUALS_TOKEN: &'static str = "|=";
 const CARET_EQUALS_TOKEN: &'static str = "^=";
 const AT_TOKEN: &'static str = "@";
 
-#[wasm_bindgen]
+#[wasm_bindgen(js_name = "tokenToString")]
 pub fn token_to_string(t: u32) -> Option<String> {
     FromPrimitive::from_u32(t)
         .map(|t: SyntaxKind| match t {
@@ -277,8 +277,8 @@ pub fn token_to_string(t: u32) -> Option<String> {
         .map(String::from)
 }
 
-#[wasm_bindgen]
-/* Does not include line breaks. For that, see is_white_space_like(). */
+/* Does not include line breaks. For that, see isWhiteSpaceLike(). */
+#[wasm_bindgen(js_name = "isWhiteSpaceSingleLine")]
 pub fn is_white_space_single_line(ch: u32) -> bool {
     // Note: NextLine is in the Zs space, and should be considered to be a whitespace.
     // It is explicitly not a line-break as it isn't in the exact set specified by EcmaScript.
@@ -302,7 +302,7 @@ pub fn is_white_space_single_line(ch: u32) -> bool {
         .unwrap_or_default() // the default of bool is false
 }
 
-#[wasm_bindgen]
+#[wasm_bindgen(js_name = "isLineBreak")]
 pub fn is_line_break(ch: u32) -> bool {
     // ES5 7.3:
     // The ECMAScript line terminator characters are listed in Table 3.
@@ -325,7 +325,7 @@ pub fn is_line_break(ch: u32) -> bool {
         .unwrap_or_default() // the default of bool is false
 }
 
-#[wasm_bindgen]
+#[wasm_bindgen(js_name = "isWhiteSpaceLike")]
 pub fn is_white_space_like(ch: u32) -> bool {
     is_white_space_single_line(ch) || is_line_break(ch)
 }
