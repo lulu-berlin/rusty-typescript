@@ -8,24 +8,14 @@ git:
 
 before_install:
   - git submodule update --init --recursive
-  - mkdir -p $HOME/typescript_node_modules/node_modules
-  - mv $HOME/typescript_node_modules/* $TRAVIS_BUILD_DIR/TypeScript/
   - export PATH="$HOME/.cargo/bin:$PATH"
   - command -v rustup || curl https://sh.rustup.rs -sSf | sh -s -- -y
-  - rustup install stable
   - rustup default stable
-  - rustup target add wasm32-unknown-unknown
-  - rustup update
-
-before_cache:
-  - mv $TRAVIS_BUILD_DIR/TypeScript/node_modules $HOME/typescript_node_modules/
 
 cache:
   directories:
     - $TRAVIS_BUILD_DIR/.git/modules
-    - $TRAVIS_BUILD_DIR/node_modules
     - $TRAVIS_BUILD_DIR/target
     - $HOME/.cargo
     - $HOME/.npm
-    - $HOME/typescript_node_modules
 
