@@ -11,7 +11,8 @@ before_install:
   - mkdir -p $HOME/typescript_node_modules/node_modules
   - mv $HOME/typescript_node_modules/* $TRAVIS_BUILD_DIR/TypeScript/
   - export PATH="$HOME/.cargo/bin:$PATH"
-  - curl https://sh.rustup.rs -sSf | sh -s -- -y
+  - command -v rustup || curl https://sh.rustup.rs -sSf | sh -s -- -y
+  - rustup update
 
 before_cache:
   - mv $TRAVIS_BUILD_DIR/TypeScript/node_modules $HOME/typescript_node_modules/
