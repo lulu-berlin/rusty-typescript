@@ -9,15 +9,12 @@ git:
 before_install:
   - git submodule update --init --recursive
   - export PATH="$HOME/.cargo/bin:$PATH"
-  - command -v rustup || curl https://sh.rustup.rs -sSf | sh -s -- -y
-  - rustup default stable
+  - curl https://sh.rustup.rs -sSf | sh -s -- -y
 
 cache:
   directories:
     - $TRAVIS_BUILD_DIR/.git/modules
     - $TRAVIS_BUILD_DIR/target
-    - $HOME/.rustup
     - $HOME/.cargo
     - $HOME/.npm
-
 
