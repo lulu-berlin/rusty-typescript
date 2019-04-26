@@ -12,6 +12,7 @@ before_install:
   - mv $HOME/typescript_node_modules/* $TRAVIS_BUILD_DIR/TypeScript/
   - export PATH="$HOME/.cargo/bin:$PATH"
   - command -v rustup || curl https://sh.rustup.rs -sSf | sh -s -- -y
+  - rustup target add wasm32-unknown-unknown
   - rustup update
 
 before_cache:
