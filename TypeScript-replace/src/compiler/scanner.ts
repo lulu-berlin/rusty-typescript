@@ -290,7 +290,7 @@ namespace ts {
     }
 
     export function tokenToString(t: SyntaxKind): string | undefined {
-        return RustyTypeScript.token_to_string(t);
+        return RustyTypeScript.tokenToString(t);
     }
 
     /* @internal */
@@ -399,16 +399,16 @@ namespace ts {
     }
 
     export function isWhiteSpaceLike(ch: number): boolean {
-        return RustyTypeScript.is_white_space_like(ch);
+        return RustyTypeScript.isWhiteSpaceLike(ch);
     }
 
     /** Does not include line breaks. For that, see isWhiteSpaceLike. */
     export function isWhiteSpaceSingleLine(ch: number): boolean {
-        return RustyTypeScript.is_white_space_single_line(ch);
+        return RustyTypeScript.isWhiteSpaceSingleLine(ch);
     }
 
     export function isLineBreak(ch: number): boolean {
-        return RustyTypeScript.is_line_break(ch);
+        return RustyTypeScript.isLineBreak(ch);
     }
 
       function isDigit(ch: number): boolean {
@@ -421,29 +421,7 @@ namespace ts {
       }
 
       export function couldStartTrivia(text: string, pos: number): boolean {
-          // Keep in sync with skipTrivia
-          const ch = text.charCodeAt(pos);
-          switch (ch) {
-              case CharacterCodes.carriageReturn:
-              case CharacterCodes.lineFeed:
-              case CharacterCodes.tab:
-              case CharacterCodes.verticalTab:
-              case CharacterCodes.formFeed:
-              case CharacterCodes.space:
-              case CharacterCodes.slash:
-                  // starts of normal trivia
-              case CharacterCodes.lessThan:
-              case CharacterCodes.bar:
-              case CharacterCodes.equals:
-              case CharacterCodes.greaterThan:
-                  // Starts of conflict marker trivia
-                  return true;
-              case CharacterCodes.hash:
-                  // Only if its the beginning can we have #! trivia
-                  return pos === 0;
-              default:
-                  return ch > CharacterCodes.maxAsciiCharacter;
-          }
+        return RustyTypeScript.couldStartTrivia(text, pos);
       }
 
       /* @internal */
