@@ -360,3 +360,18 @@ pub fn could_start_trivia(text: &str, pos: usize) -> bool {
         })
         .unwrap_or_default()
 }
+
+/** Optionally, get the shebang */
+#[wasm_bindgen(js_name = "getShebang")]
+pub fn get_shebang(text: &str) -> Option<String> {
+    if text.starts_with("#!") {
+        let shebang = if let Some(length) = text.find(|c: char| c == '\n' || c == '\r') {
+            &text[..length]
+        } else {
+            text
+        };
+        Some(String::from(shebang))
+    } else {
+        None
+    }
+}

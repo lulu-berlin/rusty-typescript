@@ -742,10 +742,7 @@ namespace ts {
 
     /** Optionally, get the shebang */
     export function getShebang(text: string): string | undefined {
-        const match = shebangTriviaRegex.exec(text);
-        if (match) {
-            return match[0];
-        }
+      return RustyTypeScript.getShebang(text);
     }
 
     export function isIdentifierStart(ch: number, languageVersion: ScriptTarget | undefined): boolean {
