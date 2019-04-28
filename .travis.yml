@@ -7,7 +7,7 @@ before_install:
   - export PATH="$HOME/.cargo/bin:$PATH"
 
 before_script:
-  - rustup default nightly
+  - rustup default stable
 
 cache:
   directories:
