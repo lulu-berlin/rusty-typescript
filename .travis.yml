@@ -5,7 +5,8 @@ node_js:
 
 before_install:
   - export PATH="$HOME/.cargo/bin:$PATH"
-  - command -v rustup || curl https://sh.rustup.rs -sSf | sh -s -- -y
+
+before_script:
   - rustup default stable
 
 cache:
@@ -14,4 +15,3 @@ cache:
     - $TRAVIS_BUILD_DIR/node_modules
     - $HOME/.cargo
     - $HOME/.npm
-

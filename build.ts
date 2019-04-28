@@ -55,16 +55,6 @@ const execCommand = (command: string, cwd = '') => new Promise(
   }
 );
 
-async function installWasmPack() {
-  try {
-    // Check whether wasm-pack is available
-    await execCommand('wasm-pack --version');
-  } catch {
-    // If not, install it
-    await execCommand('cargo install wasm-pack');
-  }
-}
-
 async function wasmPack() {
   await execCommand(`wasm-pack build --target nodejs --out-dir ${WASM_PACK_DEST}`);
 }
@@ -148,7 +138,6 @@ function bundle() {
 }
 
 export const build = series(
-  installWasmPack,
   clean,
   wasmPack,
   inlineWasm,
