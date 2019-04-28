@@ -34,3 +34,11 @@ To run the TypeScript tests against the injected source code, run:
 ```sh
 $ npm test
 ```
+
+## Contribute
+
+Contributions are very welcome. Just open an issue, add a comment to an existing one or fork and make a pull request.
+
+Rewriting the entire codebase of TypeScript is a very big (and fun!) project. There is a lot to do and enough for whoever is interested in giving a hand. Join me and let's make it happen :)
+
+![rusty-typescript](https://media1.tenor.com/images/2ceb8a9146957d119d377e7c63b3d8fd/tenor.gif)
