@@ -15,4 +15,3 @@ cache:
     - $TRAVIS_BUILD_DIR/node_modules
     - $HOME/.cargo
     - $HOME/.npm
-
