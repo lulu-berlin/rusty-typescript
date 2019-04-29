@@ -1,6 +1,7 @@
 use num_derive::FromPrimitive;
 
 #[derive(FromPrimitive)]
+#[repr(u32)]
 pub enum SyntaxKind {
     Unknown = 0,
     EndOfFileToken,
@@ -369,6 +370,7 @@ pub enum SyntaxKind {
 }
 
 #[derive(FromPrimitive, PartialEq, PartialOrd)]
+#[repr(u32)]
 pub enum CharacterCodes {
     NullCharacter = 0,
     MaxAsciiCharacter = 0x7F,
@@ -503,4 +505,11 @@ pub enum CharacterCodes {
     ByteOrderMark = 0xFEFF,
     Tab = 0x09,         // \t
     VerticalTab = 0x0B, // \v
+}
+
+#[derive(Clone, Copy)]
+#[repr(u32)]
+pub enum CommentKind {
+    SingleLineCommentTrivia = SyntaxKind::SingleLineCommentTrivia as u32,
+    MultiLineCommentTrivia = SyntaxKind::MultiLineCommentTrivia as u32,
 }

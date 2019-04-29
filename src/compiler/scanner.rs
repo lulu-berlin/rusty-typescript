@@ -1,5 +1,9 @@
-use crate::types::{CharacterCodes, SyntaxKind};
+use crate::types::{CharacterCodes, CommentKind, SyntaxKind};
+use js_sys::Function;
 use num_traits::FromPrimitive;
+use std::char;
+use std::iter::{Enumerate, Peekable, Skip};
+use std::str::Chars;
 use wasm_bindgen::prelude::*;
 
 const ABSTRACT: &'static str = "abstract";
@@ -375,3 +379,235 @@ pub fn get_shebang(text: &str) -> Option<String> {
         None
     }
 }
+
+struct PeekablePosChar<'a>(Peekable<Skip<Enumerate<Chars<'a>>>>);
+
+impl<'a> Iterator for PeekablePosChar<'a> {
+    type Item = (usize, char);
+
+    fn next(&mut self) -> Option<Self::Item> {
+        self.0.next()
+    }
+}
+
+impl<'a> PeekablePosChar<'a> {
+    fn from(text: &'a str, skip: usize) -> Self {
+        PeekablePosChar(text.chars().enumerate().skip(skip).peekable())
+    }
+
+    fn next_char(&mut self) -> Option<char> {
+        self.0.next().map(|(_, ch)| ch)
+    }
+
+    fn next_character_code(&mut self) -> Option<CharacterCodes> {
+        self.next_char()
+            .map(|ch| FromPrimitive::from_u32(ch as u32))
+            .unwrap_or_default()
+    }
+
+    fn peek(&mut self) -> Option<(usize, char)> {
+        match self.0.peek() {
+            Some((pos, ch)) => Some((*pos, *ch)),
+            None => None,
+        }
+    }
+
+    fn peek_next_character_code(&mut self) -> Option<CharacterCodes> {
+        self.0
+            .peek()
+            .map(|(_, ch)| FromPrimitive::from_u32(*ch as u32))
+            .unwrap_or_default()
+    }
+}
+
+type CommentRangesIteratorCallback<T> = fn(usize, usize, CommentKind, bool, Option<T>) -> bool;
+
+#[derive(Clone, Copy)]
+struct PendingCommentRange {
+    pending_position: usize,
+    pending_end: usize,
+    pending_kind: CommentKind,
+    pending_has_trailing_new_line: bool,
+}
+
+struct CommentRangesIterator<'a, T, U: Copy>
+{
+    reduce: bool,
+    pos_char: PeekablePosChar<'a>,
+    trailing: bool,
+    collecting: bool,
+    callback: CommentRangesIteratorCallback<T>,
+    state: Option<T>,
+    pending_comment_range: Option<PendingCommentRange>,
+    accumulator: Option<U>,
+}
+
+fn handle_line_feed<T, U: Copy>(
+    CommentRangesIterator {
+        trailing,
+        collecting,
+        pending_comment_range,
+        accumulator,
+        ..
+    }: &mut CommentRangesIterator<T, U>,
+) -> Option<Option<U>>
+{
+    if *trailing {
+        None
+    } else {
+        *collecting = true;
+        if let Some(pending_comment_range) = pending_comment_range.as_mut() {
+            pending_comment_range.pending_has_trailing_new_line = true;
+        }
+        Some(*accumulator)
+    }
+}
+
+impl<'a, T, U: Copy> Iterator for CommentRangesIterator<'a, T, U>
+{
+    type Item = Option<U>;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        if let Some((pos, ch)) = self.pos_char.next() {
+            let charcode: Option<CharacterCodes> = FromPrimitive::from_u32(ch as u32);
+            match charcode {
+                Some(CharacterCodes::CarriageReturn) => {
+                    if self.pos_char.peek_next_character_code() == Some(CharacterCodes::LineFeed) {
+                        // Advance the iterator by one
+                        self.pos_char.next();
+                    }
+
+                    handle_line_feed(self)
+                }
+                Some(CharacterCodes::LineFeed) => handle_line_feed(self),
+                Some(CharacterCodes::Tab)
+                | Some(CharacterCodes::VerticalTab)
+                | Some(CharacterCodes::FormFeed)
+                | Some(CharacterCodes::Space) => Some(self.accumulator),
+                Some(CharacterCodes::Slash) => {
+                    let next_char = self.pos_char.peek_next_character_code();
+                    let mut has_trailing_new_line = false;
+                    if next_char == Some(CharacterCodes::Slash)
+                        || next_char == Some(CharacterCodes::Asterisk)
+                    {
+                        let kind = if next_char == Some(CharacterCodes::Slash) {
+                            CommentKind::SingleLineCommentTrivia
+                        } else {
+                            CommentKind::MultiLineCommentTrivia
+                        };
+                        let start_pos = pos;
+                        // Advance the iterator by one
+                        self.pos_char.next();
+                        if next_char == Some(CharacterCodes::Slash) {
+                            while let Some(ch) = self.pos_char.next_char() {
+                                if is_line_break(ch as u32) {
+                                    has_trailing_new_line = true;
+                                    break;
+                                }
+                            }
+                        } else {
+                            while let Some(ch) = self.pos_char.next_character_code() {
+                                let next_char = self.pos_char.peek_next_character_code();
+                                if ch == CharacterCodes::Asterisk
+                                    && next_char == Some(CharacterCodes::Slash)
+                                {
+                                    self.pos_char.next();
+                                    break;
+                                }
+                            }
+                        }
+
+                        if self.collecting {
+                            if let Some(PendingCommentRange {
+                                pending_position,
+                                pending_end,
+                                pending_kind,
+                                pending_has_trailing_new_line,
+                            }) = self.pending_comment_range
+                            {
+                                self.accumulator = self.callback(
+                                    pending_position,
+                                    pending_end,
+                                    pending_end,
+                                    pending_has_trailing_new_line,
+                                    self.state,
+                                    self.accumulator,
+                                );
+                                if !self.reduce && self.accumulator.is_some() {
+                                    // TODO: need to return the accumulator and end the iterator!
+                                    return None;
+                                }
+                            }
+                        }
+
+                        Some(self.accumulator)
+                    } else {
+                        None
+                    }
+                }
+                _ => None,
+            }
+        } else {
+            None
+        }
+    }
+}
+
+impl<'a, T, U: Copy> CommentRangesIterator<'a, T, U>
+{
+    fn new(
+        reduce: bool,
+        text: &'a str,
+        position: usize,
+        trailing: bool,
+        callback: CommentRangesIteratorCallback<T>,
+        state: Option<T>,
+        initial: Option<U>,
+    ) -> Self {
+        let (position, collecting) = if position == 0 {
+            (
+                if let Some(shebang) = get_shebang(text) {
+                    shebang.chars().count()
+                } else {
+                    position
+                },
+                true,
+            )
+        } else {
+            (position, trailing)
+        };
+
+        CommentRangesIterator {
+            reduce,
+            pos_char: PeekablePosChar::from(text, position),
+            trailing,
+            collecting,
+            callback,
+            state,
+            accumulator: initial,
+            pending_comment_range: None,
+        }
+    }
+}
+
+pub fn for_each_leading_comment_range<T, U: Copy>(
+    text: &str,
+    position: usize,
+    callback: CommentRangesIteratorCallback<T>,
+    state: Option<T>,
+) -> Option<U>
+{
+    let iter = CommentRangesIterator::new(
+        /* reduce */ false, text, position, /* trailing */ false, callback, state,
+        /* initial */ None,
+    );
+    None
+}
+
+/*
+    export function forEachLeadingCommentRange<U>(text: string, pos: number, cb: (pos: number, end: number, kind: CommentKind, hasTrailingNewLine: boolean) => U): U | undefined;
+    export function forEachLeadingCommentRange<T, U>(text: string, pos: number, cb: (pos: number, end: number, kind: CommentKind, hasTrailingNewLine: boolean, state: T) => U, state: T): U | undefined;
+    export function forEachLeadingCommentRange<T, U>(text: string, pos: number, cb: (pos: number, end: number, kind: CommentKind, hasTrailingNewLine: boolean, state: T) => U, state?: T): U | undefined {
+        return iterateCommentRanges(/*reduce*/ false, text, pos, /*trailing*/ false, cb, state);
+    }
+*/
