@@ -2,12 +2,14 @@
 [![Gitter](https://badges.gitter.im/rusty-typescript/community.svg)](https://gitter.im/rusty-typescript/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 # rusty-typescript
-A re-implementation of TypeScript in Rust.
+A TypeScript compiler written in Rust.
 
 This is a very experimental project in its initial phase.
 Its goal is to create a [WebAssembly](https://webassembly.org/)
 implementation of [TypeScript](https://www.typescriptlang.org/)
 written in [Rust](https://www.rust-lang.org/).
+
+Note that this is still a normal TypeScript compiler, compiling TypeScript code into JavaScript. It only leverages Rust and WebAssembly for better performance.
 
 The approach taken here is to inline the WebAssembly binary into the
 JavaScript, and bundle everything into one TypeScript file (with type
@@ -18,8 +20,12 @@ This way, the new implementation can be verified against the same tests used by 
 
 ## How to run it?
 
-You would need to have `nodejs` and `npm` installed as well as the Rust toolchain
-for the target `wasm32-unknown-unknown`.
+You would need to have `nodejs` and `npm` installed. Running `npm install` will automatically install the Rust toolchain and [wasm-pack](https://github.com/rustwasm/wasm-pack) (using [wasm-pack-npm](https://github.com/robertohuertasm/wasm-pack-npm)). 
+
+You might need to add the cargo binary directory to your `PATH`, like so:
+```sh
+$ export PATH="$HOME/.cargo/bin:$PATH"
+```
 
 To build the WebAssembly artifact, run:
 ```sh

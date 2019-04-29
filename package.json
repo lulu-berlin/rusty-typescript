@@ -1,7 +1,7 @@
 {
   "name": "rusty-typescript",
   "version": "0.1.0",
-  "description": "A re-implementation of TypeScript in Rust",
+  "description": "A TypeScript compiler written in Rust",
   "main": "index.js",
   "scripts": {
     "gulp": "gulp --gulpfile build.ts",
