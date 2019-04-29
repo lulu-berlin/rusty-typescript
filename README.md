@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.com/yever/rusty-typescript.svg?branch=master)](https://travis-ci.com/yever/rusty-typescript)
+[![Gitter](https://badges.gitter.im/rusty-typescript/community.svg)](https://gitter.im/rusty-typescript/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 # rusty-typescript
 A re-implementation of TypeScript in Rust.
