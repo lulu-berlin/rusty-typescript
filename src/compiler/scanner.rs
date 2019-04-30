@@ -585,32 +585,42 @@ pub fn for_each_leading_comment_range(
     position: usize,
     callback: Function,
     state: JsValue,
-) -> Option<JsValue> {
-    let f = move |pos: usize,
-                  end: usize,
-                  kind: CommentKind,
-                  has_trailing_new_line: bool,
-                  _: &JsValue,
-                  _: Option<JsValue>|
-          -> Option<JsValue> {
-        let result = callback.apply(&JsValue::NULL, &js_sys::Array::of4(
-            &JsValue::from(pos as u32),
-            &JsValue::from(end as u32),
-            &JsValue::from(kind as u32),
-            &JsValue::from_bool(has_trailing_new_line),
-        )).unwrap();
+) -> JsValue {
+    iterate_comment_ranges(
+        false,
+        text,
+        position,
+        false,
+        |pos, end, kind, has_trailing_new_line, _, _| -> Option<JsValue> {
+            let result: JsValue = match callback
+                .apply(
+                    &JsValue::NULL,
+                    &js_sys::Array::of4(
+                        &JsValue::from(pos as u32),
+                        &JsValue::from(end as u32),
+                        &JsValue::from(kind as u32),
+                        &JsValue::from_bool(has_trailing_new_line),
+                    ),
+                ) {
+                    Ok(value) => value,
+                    Err(_) => {
+                        JsValue::UNDEFINED
+                    }
+                };
 
-        // The value is only relevant if it is "truthy", i.e., Boolean(value) === true
-        let truthy = JsValue::as_bool(&Boolean::new(&result)).unwrap_or(false);
+            // The value is only relevant if it is "truthy", i.e., Boolean(value) === true
+            let truthy = JsValue::as_bool(&Boolean::new(&result)).unwrap_or(false);
 
-        if truthy {
-            Some(result)
-        } else {
-            None
-        }
-    };
-
-    iterate_comment_ranges(false, text, position, false, f, state, None)
+            if truthy {
+                Some(result)
+            } else {
+                None
+            }
+        },
+        state,
+        None,
+    )
+    .unwrap_or(JsValue::UNDEFINED)
 }
 
 /*
