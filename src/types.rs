@@ -1,4 +1,5 @@
 use num_derive::FromPrimitive;
+use wasm_bindgen::prelude::*;
 
 #[derive(FromPrimitive)]
 pub enum SyntaxKind {
@@ -503,4 +504,12 @@ pub enum CharacterCodes {
     ByteOrderMark = 0xFEFF,
     Tab = 0x09,         // \t
     VerticalTab = 0x0B, // \v
+}
+
+#[wasm_bindgen]
+pub struct SourceFileLike {
+    #[wasm_bindgen(readonly)]
+    pub text: &'static str,
+    #[wasm_bindgen(readonly, js_name = "lineMap")]
+    pub line_map: Option<Vec<usize>>,
 }

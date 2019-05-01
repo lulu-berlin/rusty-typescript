@@ -1,3 +1,4 @@
+use crate::types::SourceFileLike;
 use crate::types::{CharacterCodes, SyntaxKind};
 use num_traits::FromPrimitive;
 use wasm_bindgen::prelude::*;
@@ -359,4 +360,42 @@ pub fn could_start_trivia(text: &str, pos: usize) -> bool {
                 .unwrap_or_default()
         })
         .unwrap_or_default()
+}
+
+pub fn compute_line_starts(text: &str) -> Vec<usize> {
+    let mut result = Vec::new();
+    let mut line_start = 0;
+    for (pos, ch) in text.chars().enumerate() {
+        if let Some(character_code) = FromPrimitive::from_u32(ch as u32) {
+            match character_code {
+                CharacterCodes::CarriageReturn => {}
+                CharacterCodes::LineFeed | _
+                    if ch as u32 > CharacterCodes::MaxAsciiCharacter as u32
+                        && is_line_break(ch as u32) =>
+                {
+                    result.push(line_start);
+                    line_start = pos;
+                }
+                _ => {}
+            }
+        }
+    }
+    result.push(line_start);
+    result
+}
+
+pub fn get_line_starts(source_file: &mut SourceFileLike) -> &[usize] {
+    source_file
+        .line_map
+        .get_or_insert_with(|| compute_line_starts(source_file.text))
+}
+
+#[wasm_bindgen(js_name = "getPositionOfLineAndCharacter")]
+pub fn get_position_of_line_and_character(
+    source_file: &mut SourceFileLike,
+    line: usize,
+    character: usize,
+) -> usize {
+    let line_starts = get_line_starts(source_file);
+    line_starts[line] + character
 }
