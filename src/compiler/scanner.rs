@@ -400,16 +400,10 @@ impl<'a> PeekablePosChar<'a> {
     }
 
     fn next_character_code(&mut self) -> Option<CharacterCodes> {
-        self.next_char()
-            .map(|ch| FromPrimitive::from_u32(ch as u32))
+        self.0
+            .next()
+            .map(|(_, ch)| FromPrimitive::from_u32(ch as u32))
             .unwrap_or_default()
-    }
-
-    fn peek(&mut self) -> Option<(usize, char)> {
-        match self.0.peek() {
-            Some((pos, ch)) => Some((*pos, *ch)),
-            None => None,
-        }
     }
 
     fn peek_next_character_code(&mut self) -> Option<CharacterCodes> {
@@ -583,7 +577,7 @@ pub fn iterate_comment_ranges<
 pub fn for_each_leading_comment_range(
     text: &str,
     position: usize,
-    callback: Function,
+    callback: &Function,
     state: JsValue,
 ) -> JsValue {
     iterate_comment_ranges(
@@ -592,21 +586,17 @@ pub fn for_each_leading_comment_range(
         position,
         false,
         |pos, end, kind, has_trailing_new_line, _, _| -> Option<JsValue> {
-            let result: JsValue = match callback
-                .apply(
-                    &JsValue::NULL,
-                    &js_sys::Array::of4(
-                        &JsValue::from(pos as u32),
-                        &JsValue::from(end as u32),
-                        &JsValue::from(kind as u32),
-                        &JsValue::from_bool(has_trailing_new_line),
-                    ),
-                ) {
-                    Ok(value) => value,
-                    Err(_) => {
-                        JsValue::UNDEFINED
-                    }
-                };
+            let args = js_sys::Array::new();
+            args.push(&JsValue::from(pos as u32));
+            args.push(&JsValue::from(end as u32));
+            args.push(&JsValue::from(kind as u32));
+            args.push(&JsValue::from_bool(has_trailing_new_line));
+            args.push(&state);
+            args.push(&JsValue::UNDEFINED);
+            let result: JsValue = match callback.apply(&JsValue::NULL, &args) {
+                Ok(value) => value,
+                Err(_) => JsValue::UNDEFINED,
+            };
 
             // The value is only relevant if it is "truthy", i.e., Boolean(value) === true
             let truthy = JsValue::as_bool(&Boolean::new(&result)).unwrap_or(false);
@@ -617,16 +607,18 @@ pub fn for_each_leading_comment_range(
                 None
             }
         },
-        state,
+        &state,
         None,
     )
     .unwrap_or(JsValue::UNDEFINED)
 }
 
-/*
-    export function forEachLeadingCommentRange<U>(text: string, pos: number, cb: (pos: number, end: number, kind: CommentKind, hasTrailingNewLine: boolean) => U): U | undefined;
-    export function forEachLeadingCommentRange<T, U>(text: string, pos: number, cb: (pos: number, end: number, kind: CommentKind, hasTrailingNewLine: boolean, state: T) => U, state: T): U | undefined;
-    export function forEachLeadingCommentRange<T, U>(text: string, pos: number, cb: (pos: number, end: number, kind: CommentKind, hasTrailingNewLine: boolean, state: T) => U, state?: T): U | undefined {
-        return iterateCommentRanges(/*reduce*/ false, text, pos, /*trailing*/ false, cb, state);
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn for_each_leading_comment_range() {
+        for_each_leading_comment_range();
     }
-*/
+}
