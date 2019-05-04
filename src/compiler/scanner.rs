@@ -1,5 +1,9 @@
-use crate::types::{CharacterCodes, SyntaxKind};
+use crate::types::{CharacterCodes, CommentKind, SyntaxKind};
+use js_sys::{Boolean, Function};
 use num_traits::FromPrimitive;
+use std::char;
+use std::iter::{Enumerate, Peekable, Skip};
+use std::str::Chars;
 use wasm_bindgen::prelude::*;
 
 const ABSTRACT: &'static str = "abstract";
@@ -359,4 +363,262 @@ pub fn could_start_trivia(text: &str, pos: usize) -> bool {
                 .unwrap_or_default()
         })
         .unwrap_or_default()
+}
+
+/** Optionally, get the shebang */
+#[wasm_bindgen(js_name = "getShebang")]
+pub fn get_shebang(text: &str) -> Option<String> {
+    if text.starts_with("#!") {
+        let shebang = if let Some(length) = text.find(|c: char| c == '\n' || c == '\r') {
+            &text[..length]
+        } else {
+            text
+        };
+        Some(String::from(shebang))
+    } else {
+        None
+    }
+}
+
+struct PeekablePosChar<'a>(Peekable<Skip<Enumerate<Chars<'a>>>>);
+
+impl<'a> Iterator for PeekablePosChar<'a> {
+    type Item = (usize, char);
+
+    fn next(&mut self) -> Option<Self::Item> {
+        self.0.next()
+    }
+}
+
+impl<'a> PeekablePosChar<'a> {
+    fn from(text: &'a str, skip: usize) -> Self {
+        PeekablePosChar(text.chars().enumerate().skip(skip).peekable())
+    }
+
+    fn next_char(&mut self) -> Option<char> {
+        self.0.next().map(|(_, ch)| ch)
+    }
+
+    fn next_character_code(&mut self) -> Option<CharacterCodes> {
+        self.0
+            .next()
+            .map(|(_, ch)| FromPrimitive::from_u32(ch as u32))
+            .unwrap_or_default()
+    }
+
+    fn peek_next_character_code(&mut self) -> Option<CharacterCodes> {
+        self.0
+            .peek()
+            .map(|(_, ch)| FromPrimitive::from_u32(*ch as u32))
+            .unwrap_or_default()
+    }
+}
+
+struct PendingCommentRange {
+    pending_position: usize,
+    pending_end: usize,
+    pending_kind: CommentKind,
+    pending_has_trailing_new_line: bool,
+}
+
+pub fn iterate_comment_ranges<
+    T,
+    U,
+    CB: Fn(usize, usize, CommentKind, bool, &T, Option<U>) -> Option<U>,
+>(
+    reduce: bool,
+    text: &str,
+    position: usize,
+    trailing: bool,
+    callback: CB,
+    state: T,
+    initial: Option<U>,
+) -> Option<U> {
+    let (position, mut collecting) = if position == 0 {
+        (
+            if let Some(shebang) = get_shebang(text) {
+                shebang.chars().count()
+            } else {
+                position
+            },
+            true,
+        )
+    } else {
+        (position, trailing)
+    };
+    let mut chars = PeekablePosChar::from(text, position);
+    let mut accumulator = initial;
+    let mut pending_comment_range: Option<PendingCommentRange> = None;
+
+    while let Some((pos, ch)) = chars.next() {
+        let charcode: Option<CharacterCodes> = FromPrimitive::from_u32(ch as u32);
+
+        match charcode {
+            Some(CharacterCodes::CarriageReturn) | Some(CharacterCodes::LineFeed) => {
+                if charcode == Some(CharacterCodes::CarriageReturn)
+                    && chars.peek_next_character_code() == Some(CharacterCodes::LineFeed)
+                {
+                    chars.next();
+                }
+
+                if trailing {
+                    break;
+                }
+
+                collecting = true;
+            }
+            Some(CharacterCodes::Tab)
+            | Some(CharacterCodes::VerticalTab)
+            | Some(CharacterCodes::FormFeed)
+            | Some(CharacterCodes::Space) => {}
+            Some(CharacterCodes::Slash) => {
+                let next_char = chars.peek_next_character_code();
+                let mut has_trailing_new_line = false;
+                if next_char == Some(CharacterCodes::Slash)
+                    || next_char == Some(CharacterCodes::Asterisk)
+                {
+                    let kind = if next_char == Some(CharacterCodes::Slash) {
+                        CommentKind::SingleLineCommentTrivia
+                    } else {
+                        CommentKind::MultiLineCommentTrivia
+                    };
+                    let start_pos = pos;
+                    let mut pos = pos + 2;
+                    chars.next();
+                    if next_char == Some(CharacterCodes::Slash) {
+                        while let Some(ch) = chars.next_char() {
+                            if is_line_break(ch as u32) {
+                                has_trailing_new_line = true;
+                                break;
+                            }
+                            pos += 1;
+                        }
+                    } else {
+                        while let Some(ch) = chars.next_character_code() {
+                            let next_char = chars.peek_next_character_code();
+                            if ch == CharacterCodes::Asterisk
+                                && next_char == Some(CharacterCodes::Slash)
+                            {
+                                chars.next();
+                                break;
+                            }
+                            pos += 1;
+                        }
+                    }
+
+                    if collecting {
+                        if let Some(PendingCommentRange {
+                            pending_position,
+                            pending_end,
+                            pending_kind,
+                            pending_has_trailing_new_line,
+                        }) = pending_comment_range
+                        {
+                            accumulator = callback(
+                                pending_position,
+                                pending_end,
+                                pending_kind,
+                                pending_has_trailing_new_line,
+                                &state,
+                                accumulator,
+                            );
+                            if !reduce && accumulator.is_some() {
+                                return accumulator;
+                            }
+                        }
+
+                        pending_comment_range = Some(PendingCommentRange {
+                            pending_position: start_pos,
+                            pending_end: pos,
+                            pending_kind: kind,
+                            pending_has_trailing_new_line: has_trailing_new_line,
+                        })
+                    }
+                } else {
+                    break;
+                }
+            }
+            _ => {
+                let ch = ch as u32;
+                if ch > CharacterCodes::MaxAsciiCharacter as u32 && is_white_space_like(ch) {
+                    if let Some(pending_comment_range) = pending_comment_range.as_mut() {
+                        if is_line_break(ch) {
+                            pending_comment_range.pending_has_trailing_new_line = true;
+                        }
+                    }
+                } else {
+                    break;
+                }
+            }
+        }
+    }
+
+    if let Some(PendingCommentRange {
+        pending_position,
+        pending_end,
+        pending_kind,
+        pending_has_trailing_new_line,
+    }) = pending_comment_range
+    {
+        accumulator = callback(
+            pending_position,
+            pending_end,
+            pending_kind,
+            pending_has_trailing_new_line,
+            &state,
+            accumulator,
+        );
+    }
+
+    accumulator
+}
+
+#[wasm_bindgen(js_name = "forEachLeadingCommentRange")]
+pub fn for_each_leading_comment_range(
+    text: &str,
+    position: usize,
+    callback: &Function,
+    state: JsValue,
+) -> JsValue {
+    iterate_comment_ranges(
+        false,
+        text,
+        position,
+        false,
+        |pos, end, kind, has_trailing_new_line, _, _| -> Option<JsValue> {
+            let args = js_sys::Array::new();
+            args.push(&JsValue::from(pos as u32));
+            args.push(&JsValue::from(end as u32));
+            args.push(&JsValue::from(kind as u32));
+            args.push(&JsValue::from_bool(has_trailing_new_line));
+            args.push(&state);
+            args.push(&JsValue::UNDEFINED);
+            let result: JsValue = match callback.apply(&JsValue::NULL, &args) {
+                Ok(value) => value,
+                Err(_) => JsValue::UNDEFINED,
+            };
+
+            // The value is only relevant if it is "truthy", i.e., Boolean(value) === true
+            let truthy = JsValue::as_bool(&Boolean::new(&result)).unwrap_or(false);
+
+            if truthy {
+                Some(result)
+            } else {
+                None
+            }
+        },
+        &state,
+        None,
+    )
+    .unwrap_or(JsValue::UNDEFINED)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn for_each_leading_comment_range() {
+        for_each_leading_comment_range();
+    }
 }
