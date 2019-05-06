@@ -4684,15 +4684,15 @@ namespace ts {
         }
     }
 
-    export function textSpanEnd(span: TextSpan) {
+    export function textSpanEnd(span: TextSpan): number {
         return RustyTypeScript.textSpanEnd(span);
     }
 
-    export function textSpanIsEmpty(span: TextSpan) {
+    export function textSpanIsEmpty(span: TextSpan): boolean {
         return RustyTypeScript.textSpanIsEmpty(span);
     }
 
-    export function textSpanContainsPosition(span: TextSpan, position: number) {
+    export function textSpanContainsPosition(span: TextSpan, position: number): boolean {
         return RustyTypeScript.textSpanContainsPosition(span, position);
     }
 
@@ -4702,11 +4702,11 @@ namespace ts {
     }
 
     // Returns true if 'span' contains 'other'.
-    export function textSpanContainsTextSpan(span: TextSpan, other: TextSpan) {
+    export function textSpanContainsTextSpan(span: TextSpan, other: TextSpan): boolean {
         return RustyTypeScript.textSpanContainsTextSpan(span, other);
     }
 
-    export function textSpanOverlapsWith(span: TextSpan, other: TextSpan) {
+    export function textSpanOverlapsWith(span: TextSpan, other: TextSpan): boolean {
         return RustyTypeScript.textSpanOverlapsWith(span, other);
     }
 
@@ -4714,19 +4714,19 @@ namespace ts {
         return RustyTypeScript.textSpanOverlap(span1, span2);
     }
 
-    export function textSpanIntersectsWithTextSpan(span: TextSpan, other: TextSpan) {
+    export function textSpanIntersectsWithTextSpan(span: TextSpan, other: TextSpan): boolean {
         return RustyTypeScript.textSpanIntersectsWithTextSpan(span, other);
     }
 
-    export function textSpanIntersectsWith(span: TextSpan, start: number, length: number) {
+    export function textSpanIntersectsWith(span: TextSpan, start: number, length: number): boolean {
         return RustyTypeScript.textSpanIntersectsWith(span, start, length);
     }
 
-    export function decodedTextSpanIntersectsWith(start1: number, length1: number, start2: number, length2: number) {
+    export function decodedTextSpanIntersectsWith(start1: number, length1: number, start2: number, length2: number): boolean {
         return RustyTypeScript.decodedTextSpanIntersectsWith(start1, length1, start2, length2);
     }
 
-    export function textSpanIntersectsWithPosition(span: TextSpan, position: number) {
+    export function textSpanIntersectsWithPosition(span: TextSpan, position: number): boolean {
         return RustyTypeScript.textSpanIntersectsWithPosition(span, position);
     }
 
@@ -4738,7 +4738,7 @@ namespace ts {
         return RustyTypeScript.createTextSpan(start, length);
     }
 
-    export function createTextSpanFromBounds(start: number, end: number) {
+    export function createTextSpanFromBounds(start: number, end: number): TextSpan {
         return RustyTypeScript.createTextSpanFromBounds(start, end);
     }
 

@@ -14,5 +14,8 @@ num-derive = "0.2"
 js-sys = "0.3"
 snafu = "0.2"
 
+[dev-dependencies]
+wasm-bindgen-test = "0.2"
+
 [lib]
 crate-type = ["cdylib"]

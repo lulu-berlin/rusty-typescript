@@ -1,14 +1,26 @@
 use snafu::Snafu;
 use wasm_bindgen::prelude::*;
 
+#[cfg(test)]
+use wasm_bindgen_test::*;
+
 #[wasm_bindgen]
 extern "C" {
     #[wasm_bindgen(js_name = TextSpan)]
     pub type TextSpanJs;
     #[wasm_bindgen(method, getter = start)]
     pub fn get_start(this: &TextSpanJs) -> usize;
-    #[wasm_bindgen(method, getter = end)]
+    #[wasm_bindgen(method, getter = length)]
     pub fn get_length(this: &TextSpanJs) -> usize;
+}
+
+#[cfg(test)]
+#[wasm_bindgen_test]
+fn test_to_from_js() {
+    let text_span = TextSpan::new(10, 10);
+    let text_span_js: TextSpanJs = text_span.into();
+    let text_span_converted: TextSpan = (&text_span_js).into();
+    assert_eq!(text_span, text_span_converted);
 }
 
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
