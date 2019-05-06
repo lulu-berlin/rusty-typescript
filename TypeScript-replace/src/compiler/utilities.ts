@@ -475,9 +475,8 @@ namespace ts {
         return false;
     }
 
-    export function isPinnedComment(text: string, start: number) {
-        return text.charCodeAt(start + 1) === CharacterCodes.asterisk &&
-            text.charCodeAt(start + 2) === CharacterCodes.exclamation;
+    export function isPinnedComment(text: string, start: number): boolean {
+        return RustyTypeScript.isPinnedComment(text, start);
     }
 
     export function getTokenPosOfNode(node: Node, sourceFile?: SourceFileLike, includeJsDoc?: boolean): number {
