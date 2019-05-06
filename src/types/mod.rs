@@ -507,39 +507,3 @@ pub enum CharacterCodes {
     Tab = 0x09,         // \t
     VerticalTab = 0x0B, // \v
 }
-
-#[wasm_bindgen]
-extern "C" {
-    pub type PseudoBigIntJs;
-    #[wasm_bindgen(method, getter = negative)]
-    pub fn get_negative(this: &PseudoBigIntJs) -> bool;
-    #[wasm_bindgen(method, getter = base10Value)]
-    pub fn get_base10_value(this: &PseudoBigIntJs) -> String;
-}
-
-#[derive(Clone)]
-pub(crate) struct PseudoBigInt {
-    negative: bool,
-    base10_value: String,
-}
-
-impl From<&PseudoBigIntJs> for PseudoBigInt {
-    fn from(pseudo_big_int_js: &PseudoBigIntJs) -> PseudoBigInt {
-        PseudoBigInt {
-            negative: pseudo_big_int_js.get_negative(),
-            base10_value: pseudo_big_int_js.get_base10_value(),
-        }
-    }
-}
-
-impl std::fmt::Display for PseudoBigInt {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        let prefix = if self.negative && self.base10_value != "0" {
-            "-"
-        } else {
-            ""
-        };
-        write!(f, "{}", prefix)?;
-        write!(f, "{}", self.base10_value)
-    }
-}
