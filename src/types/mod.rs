@@ -1,6 +1,6 @@
 use num_derive::FromPrimitive;
-use wasm_bindgen::prelude::*;
 
+pub mod pseudobigint;
 pub mod textspan;
 
 #[derive(FromPrimitive)]
