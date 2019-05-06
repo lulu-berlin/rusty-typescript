@@ -145,7 +145,7 @@ pub fn text_span_overlaps_with(span: &TextSpanJs, other: &TextSpanJs) -> bool {
 pub fn text_span_overlap(span: &TextSpanJs, other: &TextSpanJs) -> Option<TextSpanJs> {
     TextSpan::from(span)
         .overlap(&other.into())
-        .map(|span| span.into())
+        .map(std::convert::Into::into)
 }
 
 #[wasm_bindgen(js_name=textSpanIntersectsWithTextSpan)]
@@ -177,7 +177,7 @@ pub fn text_span_intersects_with_position(span: &TextSpanJs, position: usize) ->
 pub fn text_span_intersection(span1: &TextSpanJs, span2: &TextSpanJs) -> Option<TextSpanJs> {
     TextSpan::from(span1)
         .intersection(&span2.into())
-        .map(|span| span.into())
+        .map(std::convert::Into::into)
 }
 
 #[wasm_bindgen(js_name=createTextSpan)]
