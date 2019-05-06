@@ -8,7 +8,7 @@
     "build": "npm run gulp build",
     "clean": "npm run gulp clean",
     "inject": "npm run gulp inject",
-    "test": "npm run inject && cd TypeScript && npm install && npm test"
+    "test": "cargo test && wasm-pack test --node && npm run inject && cd TypeScript && npm install && npm test"
   },
   "repository": {
     "type": "git",

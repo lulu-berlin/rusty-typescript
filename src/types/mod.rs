@@ -1,5 +1,8 @@
 use num_derive::FromPrimitive;
 
+pub mod pseudobigint;
+pub mod textspan;
+
 #[derive(FromPrimitive)]
 pub enum SyntaxKind {
     Unknown = 0,
