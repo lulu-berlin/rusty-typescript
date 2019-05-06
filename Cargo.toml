@@ -13,6 +13,7 @@ num-traits = "0.2"
 num-derive = "0.2"
 num-bigint = "0.2"
 js-sys = "0.3"
+# Used for error handling
 snafu = "0.2"
 
 [dev-dependencies]
